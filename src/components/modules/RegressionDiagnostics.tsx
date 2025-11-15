@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { LineChart } from 'lucide-react';
+import { DiagnosticDashboard } from '@/components/interactives/DiagnosticDashboard';
 
 export function RegressionDiagnostics() {
   return (
@@ -21,11 +22,12 @@ export function RegressionDiagnostics() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="residuals">Residuals</TabsTrigger>
           <TabsTrigger value="influence">Influence</TabsTrigger>
           <TabsTrigger value="assumptions">Assumptions</TabsTrigger>
+          <TabsTrigger value="dashboard">Interactive Dashboard</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -328,6 +330,10 @@ export function RegressionDiagnostics() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="dashboard">
+          <DiagnosticDashboard />
         </TabsContent>
       </Tabs>
     </div>

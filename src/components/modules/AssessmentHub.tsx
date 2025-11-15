@@ -54,6 +54,126 @@ const sampleQuestions: Question[] = [
     correct: 1,
     rationale: 'Log transformation is most effective for highly right-skewed data. Square root is for mild skewness. Log requires all values > 0; if zeros exist, use log(x+1) or log(x+c).',
     module: 'Data Cleaning'
+  },
+  {
+    id: 6,
+    question: 'You have outliers at 5 standard deviations from the mean for creatinine values. What should you do first?',
+    options: ['Automatically remove them', 'Winsorize to 3 SD', 'Verify if they are data entry errors', 'Apply log transformation'],
+    correct: 2,
+    rationale: 'Always investigate outliers first. Extreme values might be data entry errors (e.g., 150 instead of 1.50), biologically implausible, or legitimate extreme cases. Never automatically remove without investigation.',
+    module: 'Data Cleaning'
+  },
+  {
+    id: 7,
+    question: 'In a QQ plot, points deviate substantially from the diagonal line in both tails. Your sample size is 400. What should you do?',
+    options: ['Transform the outcome variable immediately', 'Use robust standard errors', 'Ignore it - CLT applies with large n', 'Remove the extreme observations'],
+    correct: 1,
+    rationale: 'With n=400, the Central Limit Theorem helps, but heavy-tailed distributions can still affect inference. Robust (Huber-White) standard errors are the most appropriate solution, allowing valid inference without transformation.',
+    module: 'Regression Diagnostics'
+  },
+  {
+    id: 8,
+    question: 'You calculate Cook\'s distance and find 8 observations with D > 4/n (where n=200). What is the correct interpretation?',
+    options: ['Remove all 8 observations', 'These are outliers that must be excluded', 'These observations are influential and warrant investigation', 'The model is invalid'],
+    correct: 2,
+    rationale: 'Cook\'s D identifies influential observations, not necessarily errors. Investigate each one: are they plausible? Data errors? If legitimate, report results with and without them (sensitivity analysis).',
+    module: 'Regression Diagnostics'
+  },
+  {
+    id: 9,
+    question: 'What is the main advantage of k-fold cross-validation over a single train/test split?',
+    options: ['Faster computation', 'Uses all data for both training and testing', 'Always gives higher performance metrics', 'Eliminates the need for external validation'],
+    correct: 1,
+    rationale: 'k-fold CV uses each observation for testing exactly once, maximizing data use and providing more stable performance estimates by averaging across k folds. It doesn\'t replace external validation.',
+    module: 'Validation'
+  },
+  {
+    id: 10,
+    question: 'You perform 5-fold cross-validation and get accuracy: [0.78, 0.81, 0.79, 0.92, 0.77]. What does the 0.92 in fold 4 suggest?',
+    options: ['Fold 4 had better quality data', 'The model is unstable or fold 4 was lucky', 'This is normal variation', 'The model is overfitting'],
+    correct: 1,
+    rationale: 'Large variation across folds (especially one outlier) suggests instability. This could be due to small sample size, random split luck, or class imbalance. Investigate fold 4 composition and consider stratified k-fold.',
+    module: 'Validation'
+  },
+  {
+    id: 11,
+    question: 'When should you use stratified k-fold cross-validation instead of regular k-fold?',
+    options: ['Always - it\'s always better', 'When outcome is continuous', 'When outcome is imbalanced binary or categorical', 'When sample size is large'],
+    correct: 2,
+    rationale: 'Stratified k-fold ensures each fold has similar outcome proportions, critical for imbalanced data (e.g., 5% mortality). Regular k-fold might create folds with 0% or 10% mortality by chance.',
+    module: 'Validation'
+  },
+  {
+    id: 12,
+    question: 'What is the purpose of bootstrap confidence intervals?',
+    options: ['To improve model accuracy', 'To handle missing data', 'To estimate uncertainty without assuming normality', 'To detect outliers'],
+    correct: 2,
+    rationale: 'Bootstrap CIs use resampling to estimate the sampling distribution of a statistic without parametric assumptions. This is especially useful for complex statistics (e.g., AUC, median) where theoretical CIs are difficult.',
+    module: 'Validation'
+  },
+  {
+    id: 13,
+    question: 'You use 1000 bootstrap samples to estimate a 95% CI. How do you construct the percentile CI?',
+    options: ['Mean ± 1.96 × SD of bootstrap estimates', 'Min and max of bootstrap estimates', '2.5th and 97.5th percentiles of bootstrap distribution', 'Use only the middle 1000 estimates'],
+    correct: 2,
+    rationale: 'The percentile method takes the 2.5th and 97.5th percentiles of the bootstrap distribution as the 95% CI. This is non-parametric and doesn\'t assume normality.',
+    module: 'Validation'
+  },
+  {
+    id: 14,
+    question: 'Why is setting a random seed important for reproducibility?',
+    options: ['It improves model performance', 'It ensures identical results when code is re-run', 'It removes all randomness from analysis', 'It\'s only needed for simulations'],
+    correct: 1,
+    rationale: 'Setting a seed ensures that random processes (sampling, CV splits, imputation) produce identical results on re-run, making your analysis reproducible. Without it, results will vary each time.',
+    module: 'Reproducibility'
+  },
+  {
+    id: 15,
+    question: 'Your dataset has perfect separation: all diabetic patients were readmitted, all non-diabetic were not. What will happen in logistic regression?',
+    options: ['Perfect prediction with AUC = 1.0', 'Coefficients will be extremely large and unstable', 'The model will not converge', 'Both B and C'],
+    correct: 3,
+    rationale: 'Perfect separation causes convergence problems and infinite coefficient estimates. Solutions: collect more data, use penalized regression (Firth), or reconsider the predictor. This is a data problem, not a model problem.',
+    module: 'Raw Data'
+  },
+  {
+    id: 16,
+    question: 'What does MNAR (Missing Not At Random) mean?',
+    options: ['Missing data has no pattern', 'Missingness depends on observed variables', 'Missingness depends on the unobserved value itself', 'Missing data can be ignored'],
+    correct: 2,
+    rationale: 'MNAR means missingness depends on the value that would have been observed. Example: patients with higher depression scores are less likely to complete depression questionnaires. MNAR is problematic and cannot be handled by standard imputation.',
+    module: 'Missing Data'
+  },
+  {
+    id: 17,
+    question: 'You have 30% missing data in a key predictor. Complete case analysis leaves you with only 100 observations. What is the risk?',
+    options: ['Loss of statistical power and potential bias', 'Improved accuracy', 'No risk if missingness is MCAR', 'The model will be more generalizable'],
+    correct: 0,
+    rationale: 'Even with MCAR, complete case analysis loses power due to reduced sample size. If missingness is MAR or MNAR, results will be biased. With only 100 observations, you also risk overfitting.',
+    module: 'Missing Data'
+  },
+  {
+    id: 18,
+    question: 'Which statement about mean imputation is TRUE?',
+    options: ['It preserves the mean but underestimates variance', 'It should be used for all missing data', 'It accounts for uncertainty in missing values', 'It works best with MNAR data'],
+    correct: 0,
+    rationale: 'Mean imputation preserves the variable mean but artificially reduces variance and destroys correlations. It treats imputed values as known, ignoring uncertainty. Use only for MCAR with low missingness (<5%).',
+    module: 'Missing Data'
+  },
+  {
+    id: 19,
+    question: 'Two predictors have correlation r = 0.85. What should you do?',
+    options: ['Automatically remove one', 'Check VIF values in the full model', 'Use both - correlation doesn\'t matter', 'Transform both variables'],
+    correct: 1,
+    rationale: 'High correlation doesn\'t guarantee multicollinearity problems in regression. Check VIF in the full model context. If VIF < 5, both can be retained. Clinical judgment determines which to keep if VIF is high.',
+    module: 'Multicollinearity'
+  },
+  {
+    id: 20,
+    question: 'What is the purpose of external validation for a prediction model?',
+    options: ['To improve model accuracy', 'To test generalizability in a different population/setting', 'To replace internal validation', 'To increase sample size'],
+    correct: 1,
+    rationale: 'External validation tests whether the model works in different populations, time periods, or settings. This is the gold standard for prediction models (TRIPOD guidelines). Internal validation (CV) alone is insufficient.',
+    module: 'Validation'
   }
 ];
 

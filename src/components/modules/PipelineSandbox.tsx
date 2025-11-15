@@ -1,6 +1,8 @@
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Workflow } from 'lucide-react';
+import { PipelineBuilder } from '@/components/interactives/PipelineBuilder';
 
 export function PipelineSandbox() {
   return (
@@ -19,7 +21,14 @@ export function PipelineSandbox() {
         </div>
       </div>
 
-      <Card>
+      <Tabs defaultValue="overview" className="w-full">
+        <TabsList className="grid w-full grid-cols-2">
+          <TabsTrigger value="overview">Pipeline Overview</TabsTrigger>
+          <TabsTrigger value="builder">Interactive Builder</TabsTrigger>
+        </TabsList>
+
+        <TabsContent value="overview" className="space-y-4">
+          <Card>
         <CardHeader>
           <CardTitle>Build Your Research Pipeline</CardTitle>
           <CardDescription>
@@ -131,6 +140,12 @@ export function PipelineSandbox() {
           </div>
         </CardContent>
       </Card>
+        </TabsContent>
+
+        <TabsContent value="builder">
+          <PipelineBuilder />
+        </TabsContent>
+      </Tabs>
     </div>
   );
 }

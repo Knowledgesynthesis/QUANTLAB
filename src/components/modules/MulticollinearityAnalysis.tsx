@@ -2,6 +2,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { Network } from 'lucide-react';
+import { MulticollinearityVisualizer } from '@/components/interactives/MulticollinearityVisualizer';
 
 export function MulticollinearityAnalysis() {
   return (
@@ -21,11 +22,12 @@ export function MulticollinearityAnalysis() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-5">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="detection">Detection</TabsTrigger>
           <TabsTrigger value="vif">VIF Analysis</TabsTrigger>
           <TabsTrigger value="solutions">Solutions</TabsTrigger>
+          <TabsTrigger value="visualizer">Interactive Visualizer</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -390,6 +392,10 @@ export function MulticollinearityAnalysis() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="visualizer">
+          <MulticollinearityVisualizer />
         </TabsContent>
       </Tabs>
     </div>
