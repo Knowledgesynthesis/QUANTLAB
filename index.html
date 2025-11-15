@@ -1,5 +1,5 @@
 <!doctype html>
-<html lang="en" class="dark">
+<html lang="en">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/vite.svg" />
@@ -7,6 +7,24 @@
     <meta name="description" content="QuantLab - Interactive data science and advanced biostatistics learning platform for clinician-scientists" />
     <meta name="theme-color" content="#0f172a" />
     <title>QuantLab - Advanced Methods for Clinician-Scientists</title>
+    <script>
+      // Initialize theme from localStorage before render to prevent flash
+      try {
+        const stored = localStorage.getItem('quantlab-storage');
+        if (stored) {
+          const { state } = JSON.parse(stored);
+          if (state?.darkMode) {
+            document.documentElement.classList.add('dark');
+          }
+        } else {
+          // Default to dark mode if no preference stored
+          document.documentElement.classList.add('dark');
+        }
+      } catch (e) {
+        // Default to dark mode on error
+        document.documentElement.classList.add('dark');
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

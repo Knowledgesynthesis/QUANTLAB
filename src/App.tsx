@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { Layout } from './components/layout/Layout';
 import { Home } from './components/modules/Home';
@@ -10,8 +11,21 @@ import { ValidationReproducibility } from './components/modules/ValidationReprod
 import { PipelineSandbox } from './components/modules/PipelineSandbox';
 import { AssessmentHub } from './components/modules/AssessmentHub';
 import { Glossary } from './components/modules/Glossary';
+import { useAppStore } from './store';
 
 function App() {
+  const darkMode = useAppStore((state) => state.darkMode);
+
+  // Sync dark mode with HTML element class
+  useEffect(() => {
+    const root = document.documentElement;
+    if (darkMode) {
+      root.classList.add('dark');
+    } else {
+      root.classList.remove('dark');
+    }
+  }, [darkMode]);
+
   return (
     <Router>
       <Layout>
