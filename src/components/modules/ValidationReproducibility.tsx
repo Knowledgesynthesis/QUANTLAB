@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { CheckCircle } from 'lucide-react';
+import { CrossValidationSimulator } from '@/components/interactives/CrossValidationSimulator';
+import { BootstrappingDemo } from '@/components/interactives/BootstrappingDemo';
 
 export function ValidationReproducibility() {
   return (
@@ -21,11 +23,13 @@ export function ValidationReproducibility() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="cross-validation">Cross-Validation</TabsTrigger>
           <TabsTrigger value="bootstrap">Bootstrapping</TabsTrigger>
           <TabsTrigger value="reproducibility">Reproducibility</TabsTrigger>
+          <TabsTrigger value="cv-simulator">CV Simulator</TabsTrigger>
+          <TabsTrigger value="bootstrap-demo">Bootstrap Demo</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -407,6 +411,14 @@ export function ValidationReproducibility() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="cv-simulator">
+          <CrossValidationSimulator />
+        </TabsContent>
+
+        <TabsContent value="bootstrap-demo">
+          <BootstrappingDemo />
         </TabsContent>
       </Tabs>
     </div>

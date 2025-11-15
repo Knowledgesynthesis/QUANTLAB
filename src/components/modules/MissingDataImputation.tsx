@@ -2,6 +2,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Badge } from '@/components/ui/badge';
 import { AlertCircle } from 'lucide-react';
+import { MissingnessMapExplorer } from '@/components/interactives/MissingnessMapExplorer';
+import { ImputationPlayground } from '@/components/interactives/ImputationPlayground';
 
 export function MissingDataImputation() {
   return (
@@ -21,11 +23,13 @@ export function MissingDataImputation() {
       </div>
 
       <Tabs defaultValue="overview" className="w-full">
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-6">
           <TabsTrigger value="overview">Overview</TabsTrigger>
           <TabsTrigger value="mechanisms">Mechanisms</TabsTrigger>
           <TabsTrigger value="strategies">Strategies</TabsTrigger>
           <TabsTrigger value="pitfalls">Pitfalls</TabsTrigger>
+          <TabsTrigger value="explorer">Missingness Map</TabsTrigger>
+          <TabsTrigger value="imputation">Imputation Lab</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-4">
@@ -308,6 +312,14 @@ export function MissingDataImputation() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="explorer">
+          <MissingnessMapExplorer />
+        </TabsContent>
+
+        <TabsContent value="imputation">
+          <ImputationPlayground />
         </TabsContent>
       </Tabs>
     </div>
