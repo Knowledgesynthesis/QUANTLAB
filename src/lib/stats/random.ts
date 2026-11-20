@@ -77,7 +77,7 @@ export class Rng {
       this.spare = null;
       return mean + sd * z;
     }
-    let u = 0, v = 0, s = 0;
+    let u: number, v: number, s: number;
     do {
       u = this.uniform() * 2 - 1;
       v = this.uniform() * 2 - 1;
@@ -101,7 +101,7 @@ export class Rng {
     const d = shape - 1 / 3;
     const c = 1 / Math.sqrt(9 * d);
     for (;;) {
-      let x = 0, v = 0;
+      let x: number, v: number;
       do {
         x = this.normal();
         v = 1 + c * x;

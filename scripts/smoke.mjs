@@ -28,11 +28,16 @@ const moduleRoutes = [...new Set(lessons.map((l) => `/${l.split('/')[1]}`))];
 let routes = ['/', '/assessment', '/glossary', '/references', '/about', '/does-not-exist', ...moduleRoutes, ...lessons];
 if (only) routes = routes.filter((r) => r.includes(only));
 
-const port = 4317;
+import { createServer } from 'node:net';
+const port = await new Promise((resolve) => {
+  const srv = createServer();
+  srv.listen(0, () => { const p = srv.address().port; srv.close(() => resolve(p)); });
+});
 const server = spawn('npx', ['vite', 'preview', '--port', String(port), '--strictPort'], { stdio: 'pipe' });
 await new Promise((resolve, reject) => {
   const t = setTimeout(() => reject(new Error('preview server did not start')), 20000);
   server.stdout.on('data', (d) => { if (String(d).includes(String(port))) { clearTimeout(t); resolve(); } });
+  server.stderr.on('data', (d) => process.stderr.write(d));
 });
 
 process.on('exit', () => server.kill());
@@ -69,7 +74,8 @@ for (const vp of viewports) {
     const problems = [];
     if (errors.length) problems.push(`console: ${errors.slice(0, 3).join(' | ')}`);
     if (info.overflow > 1) problems.push(`horizontal overflow ${info.overflow}px`);
-    if (info.text < 200) problems.push(`little content (${info.text} chars)`);
+    if (route === '/does-not-exist') { if (!info.h1.includes('not found')) problems.push('404 page missing'); }
+    else if (info.text < 200) problems.push(`little content (${info.text} chars)`);
     if (info.stub) problems.push('stub lesson');
     if (problems.length) failures.push(`${vp.name} ${route}: ${problems.join('; ')}`);
     console.log(`${problems.length ? 'FAIL' : 'ok  '} ${vp.name.padEnd(7)} ${route.padEnd(38)} ${String(ms).padStart(5)}ms  ${info.h1.slice(0, 50)}`);

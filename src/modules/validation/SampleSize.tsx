@@ -34,7 +34,7 @@ export default function SampleSize() {
           <SliderField label="Anticipated outcome proportion" value={prev} onChange={setPrev} min={0.02} max={0.5} step={0.01} format={(v) => pct(v)} />
           <SliderField label="Candidate predictor parameters" value={params} onChange={setParams} min={1} max={60} hint="Count every df: dummies, spline terms, and every candidate considered, not only those finally kept." />
           <div className="space-y-2">
-            <Checkbox label="Derive R² from an anticipated C-statistic" checked={useC} onChange={setUseC} hint="E.g., the C of an existing model for the same outcome, ideally adjusted for optimism." />
+            <Checkbox label="Derive R² from an anticipated C-statistic" checked={useC} onChange={setUseC} hint={<>E.g., the C of an existing model for the same outcome, ideally optimism-adjusted. Conversion as in <Cite ids="riley2021note" />.</>} />
             {useC ? (
               <SliderField label="Anticipated C-statistic" value={cstat} onChange={setCstat} min={0.55} max={0.95} step={0.01} format={(v) => v.toFixed(2)} />
             ) : (
@@ -69,7 +69,7 @@ export default function SampleSize() {
       <P>
         External validation tests the model in data from a different setting, period or population. Calibration is the usual casualty: different baseline risk shifts CITL;
         different case-mix or measurement changes the slope. Validation studies need enough events to estimate calibration precisely, typically several hundred; precision-based
-        sample-size methods are available (pmvalsampsize) <Cite ids="riley2024" />.
+        sample-size methods are available (pmvalsampsize) <Cite ids="riley2021ext,riley2024" />.
       </P>
       <DataTable
         head={['Finding at validation', 'Usual update']}

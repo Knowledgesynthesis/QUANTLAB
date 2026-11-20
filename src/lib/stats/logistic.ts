@@ -51,8 +51,8 @@ export function fitLogistic(X: Matrix, y: readonly number[], names: readonly str
   // Start the intercept at the marginal log-odds for faster convergence.
   if (p > 0 && X.every((r) => r[0] === 1)) beta[0] = Math.log(Math.max(ybar, 1e-6) / Math.max(1 - ybar, 1e-6));
   let converged = false;
-  let iter = 0;
-  let info: Matrix = [];
+  let iter: number;
+  let info: Matrix;
   let prevDev = Infinity;
   for (iter = 1; iter <= maxIter; iter++) {
     const eta = X.map((r, i) => r.reduce((s, x, j) => s + x * beta[j], 0) + offset[i]);

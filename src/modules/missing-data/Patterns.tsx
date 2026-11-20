@@ -7,12 +7,12 @@ import { CheckYourself, Cite, Lab, P, Takeaways } from '@/components/learning';
 import { fmt, pct } from '@/lib/utils';
 
 const VARS: (keyof CleanRow)[] = ['age', 'sex', 'bmi', 'smoking', 'sbp', 'heart_rate', 'hemoglobin', 'creatinine', 'los_days'];
+const isNA = (r: CleanRow, v: keyof CleanRow) => r[v] === null || r[v] === undefined;
+const patternOf = (r: CleanRow) => VARS.map((v) => (isNA(r, v) ? '1' : '0')).join('');
 
 export default function Patterns() {
   const rows = useMemo(() => applyCleaning(messyExtract().rows, correctChoices).rows, []);
   const [sortBy, setSortBy] = useState<'file' | 'pattern' | 'age'>('pattern');
-  const isNA = (r: CleanRow, v: keyof CleanRow) => r[v] === null || r[v] === undefined;
-  const patternOf = (r: CleanRow) => VARS.map((v) => (isNA(r, v) ? '1' : '0')).join('');
 
   const ordered = useMemo(() => {
     const idx = rows.map((_, i) => i);

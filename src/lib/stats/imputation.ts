@@ -7,6 +7,8 @@ import { Rng } from './random';
 import { cholesky, crossprod, crossprodVec, invertSPD, matVec, type Matrix } from './matrix';
 import { mean } from './descriptive';
 import { tQuantile, tPValue } from './distributions';
+import { fitLogistic } from './logistic';
+import { logistic } from './random';
 
 export type Maybe = number | null;
 
@@ -82,10 +84,23 @@ export function drawPMM(target: readonly Maybe[], predictors: Matrix, rng: Rng, 
   });
 }
 
+/**
+ * One proper imputation of a binary (0/1) variable (mice's "logreg" method):
+ * β* ~ N(β̂, V̂) from a logistic fit on the observed rows, then y* ~ Bernoulli(logit⁻¹(Xβ*)).
+ */
+export function drawLogreg(target: readonly Maybe[], predictors: Matrix, rng: Rng): number[] {
+  const obsIdx = target.map((v, i) => (v === null ? -1 : i)).filter((i) => i >= 0);
+  const fit = fitLogistic(obsIdx.map((i) => predictors[i]), obsIdx.map((i) => target[i] as number), predictors[0].map((_, j) => `x${j}`), { ridge: 1e-4 });
+  const L = cholesky(fit.vcov) ?? fit.vcov.map((r, i) => r.map((_, j) => (i === j ? Math.sqrt(Math.max(fit.vcov[i][i], 0)) : 0)));
+  const z = fit.coef.map(() => rng.normal());
+  const betaStar = fit.coef.map((b, i) => b + L[i].reduce((s, l, j) => s + l * z[j], 0));
+  return target.map((v, i) => (v === null ? rng.bernoulli(logistic(predictors[i].reduce((s, x, j) => s + x * betaStar[j], 0))) : v));
+}
+
 export interface MiceVariable {
   name: string;
   values: Maybe[];
-  method: 'norm' | 'pmm';
+  method: 'norm' | 'pmm' | 'logreg';
 }
 
 /**
@@ -117,7 +132,7 @@ export function mice(
           ...complete.map((c) => c.values[i]),
           ...others.map((o) => current[o.name][i]),
         ]);
-        current[v.name] = v.method === 'pmm' ? drawPMM(v.values, X, rng) : drawNorm(v.values, X, rng);
+        current[v.name] = v.method === 'pmm' ? drawPMM(v.values, X, rng) : v.method === 'logreg' ? drawLogreg(v.values, X, rng) : drawNorm(v.values, X, rng);
       }
     }
     results.push(current);
