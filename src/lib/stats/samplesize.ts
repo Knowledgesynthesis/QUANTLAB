@@ -1,3 +1,6 @@
+import { normalQuantile } from './distributions';
+import { logistic } from './random';
+
 /**
  * Minimum sample size for developing a clinical prediction model with a binary
  * outcome (Riley et al. BMJ 2020;368:m441), reproducing pmsampsize.
@@ -57,4 +60,24 @@ export function binaryOutcomeSampleSize(input: BinarySampleSizeInput): BinarySam
     maxR2cs: maxR2, r2cs: r2, criterion1: c1, criterion2: c2, criterion3: c3, shrinkageCriterion2: sVH,
     n, events: Math.ceil(n * phi), epp: (n * phi) / p, binding,
   };
+}
+
+/**
+ * Cox–Snell R² implied by an anticipated C-statistic and outcome proportion, assuming a
+ * binormal linear predictor with equal variances (Riley, Van Calster & Collins, Stat Med 2021;
+ * as pmsampsize's `cstatistic` option). Computed by numerical integration instead of simulation.
+ */
+export function coxSnellFromC(c: number, prevalence: number): number {
+  const mu = Math.SQRT2 * normalQuantile(c);
+  const alpha = Math.log(prevalence / (1 - prevalence)) - (mu * mu) / 2;
+  const h = 0.002;
+  let e1 = 0, e0 = 0;
+  for (let z = -10; z <= 10; z += h) {
+    const w = (Math.exp(-0.5 * z * z) / Math.sqrt(2 * Math.PI)) * h;
+    const p1 = logistic(alpha + mu * (z + mu)); // events: linear predictor ~ N(mu, 1)
+    const p0 = logistic(alpha + mu * z); // non-events: ~ N(0, 1)
+    e1 += w * Math.log(p1 / prevalence);
+    e0 += w * Math.log((1 - p0) / (1 - prevalence));
+  }
+  return 1 - Math.exp(-2 * (prevalence * e1 + (1 - prevalence) * e0));
 }

@@ -3,7 +3,7 @@ import ref from './reference.json';
 import {
   Rng, fitOLS, robustVcov, breuschPagan, vif, gvif, conditionIndices, fitLogistic, auc, calibration, lowess,
   normalCdf, normalQuantile, tCdf, tQuantile, chiSquarePValue, fPValue, fQuantile, rubinsRules,
-  binaryOutcomeSampleSize, mean, sd, quantile, mad, skewness, ranks, rcsBasis, rcsKnots, fitHuber,
+  binaryOutcomeSampleSize, coxSnellFromC, mean, sd, quantile, mad, skewness, ranks, rcsBasis, rcsKnots, fitHuber,
   independentColumns, bcaInterval, percentileInterval, bootstrapReplicates, drawNorm, mice, foldAssignments,
   netBenefit, crossprod, invertSPD, symmetricEigen, determinant, correlation,
 } from '../index';
@@ -245,6 +245,16 @@ describe('Riley sample size reproduces pmsampsize', () => {
     expect(r.criterion3).toBe(221);
     expect(r.n).toBe(662);
     expect(r.events).toBe(116);
+  });
+  it('C-statistic → Cox–Snell R² matches pmsampsize (Python) and gives the same n', () => {
+    // pmsampsize(type="b", cstatistic=C, parameters=12, prevalence=0.2): R²cs and final n
+    for (const [c, r2, n] of [[0.65, 0.0448, 2351], [0.75, 0.1257, 798], [0.85, 0.2498, 370]]) {
+      const est = coxSnellFromC(c, 0.2);
+      expect(Math.abs(est - r2)).toBeLessThan(0.0015);
+      const res = binaryOutcomeSampleSize({ parameters: 12, prevalence: 0.2, coxSnellR2: Math.round(est * 1e4) / 1e4 });
+      expect(Math.abs(res.n - n) / n).toBeLessThan(0.02);
+    }
+    expect(coxSnellFromC(0.5, 0.2)).toBeCloseTo(0, 6);
   });
 });
 
