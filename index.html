@@ -2,28 +2,23 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="QuantLab - Interactive data science and advanced biostatistics learning platform for clinician-scientists" />
-    <meta name="theme-color" content="#0f172a" />
-    <title>QuantLab - Advanced Methods for Clinician-Scientists</title>
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta name="description" content="QuantLab: interactive, evidence-based training in the clinical research data pipeline — audit, cleaning, missing data, regression diagnostics, collinearity, validation and reproducibility." />
+    <meta name="theme-color" content="#1a1a19" />
+    <title>QuantLab — Research Data Methods for Clinician-Scientists</title>
     <script>
-      // Initialize theme from localStorage before render to prevent flash
-      try {
-        const stored = localStorage.getItem('quantlab-storage');
-        if (stored) {
-          const { state } = JSON.parse(stored);
-          if (state?.darkMode) {
-            document.documentElement.classList.add('dark');
-          }
-        } else {
-          // Default to dark mode if no preference stored
-          document.documentElement.classList.add('dark');
-        }
-      } catch (e) {
-        // Default to dark mode on error
-        document.documentElement.classList.add('dark');
-      }
+      // Apply the saved theme before first paint to avoid a flash.
+      (function () {
+        var theme = 'system';
+        try {
+          var raw = localStorage.getItem('quantlab-v2');
+          if (raw) theme = (JSON.parse(raw).state || {}).theme || 'system';
+        } catch (e) {}
+        var dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+        document.documentElement.classList.toggle('dark', dark);
+      })();
     </script>
   </head>
   <body>

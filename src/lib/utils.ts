@@ -1,67 +1,52 @@
-import { type ClassValue, clsx } from 'clsx';
+import { clsx, type ClassValue } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
 export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
-/**
- * Format a number to a specified number of decimal places
- */
-export function formatNumber(value: number, decimals: number = 2): string {
-  return value.toFixed(decimals);
+/** Format a number for display with fixed decimals; handles non-finite values. */
+export function fmt(x: number | null | undefined, digits = 2): string {
+  if (x === null || x === undefined || Number.isNaN(x)) return '—';
+  if (!Number.isFinite(x)) return x > 0 ? '∞' : '−∞';
+  const s = x.toFixed(digits);
+  return s.startsWith('-') ? `−${s.slice(1)}` : s;
 }
 
-/**
- * Calculate percentile of a dataset
- */
-export function percentile(arr: number[], p: number): number {
-  const sorted = [...arr].sort((a, b) => a - b);
-  const index = (p / 100) * (sorted.length - 1);
-  const lower = Math.floor(index);
-  const upper = Math.ceil(index);
-  const weight = index % 1;
-
-  if (lower === upper) return sorted[lower];
-  return sorted[lower] * (1 - weight) + sorted[upper] * weight;
+/** Format a p-value the way journals expect (APA/AMA style). */
+export function fmtP(p: number): string {
+  if (!Number.isFinite(p)) return '—';
+  if (p < 0.001) return '<0.001';
+  if (p > 0.99) return '>0.99';
+  return p < 0.01 ? p.toFixed(3) : p.toFixed(2);
 }
 
-/**
- * Calculate mean of an array
- */
-export function mean(arr: number[]): number {
-  return arr.reduce((sum, val) => sum + val, 0) / arr.length;
+export function pct(x: number, digits = 0): string {
+  if (!Number.isFinite(x)) return '—';
+  return `${(x * 100).toFixed(digits)}%`;
 }
 
-/**
- * Calculate standard deviation
- */
-export function std(arr: number[]): number {
-  const mu = mean(arr);
-  const variance = arr.reduce((sum, val) => sum + Math.pow(val - mu, 2), 0) / arr.length;
-  return Math.sqrt(variance);
+export function downloadText(filename: string, text: string, mime = 'text/plain') {
+  const blob = new Blob([text], { type: `${mime};charset=utf-8` });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = filename;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 
-/**
- * Generate random normal distribution using Box-Muller transform
- */
-export function randomNormal(mean: number = 0, std: number = 1): number {
-  const u1 = Math.random();
-  const u2 = Math.random();
-  const z0 = Math.sqrt(-2 * Math.log(u1)) * Math.cos(2 * Math.PI * u2);
-  return z0 * std + mean;
-}
-
-/**
- * Debounce function for performance optimization
- */
-export function debounce<T extends (...args: any[]) => any>(
-  func: T,
-  wait: number
-): (...args: Parameters<T>) => void {
-  let timeout: ReturnType<typeof setTimeout>;
-  return (...args: Parameters<T>) => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => func(...args), wait);
-  };
+/** Defer heavy synchronous work so the UI can paint a "running" state first. */
+export function defer<T>(fn: () => T): Promise<T> {
+  return new Promise((resolve, reject) => {
+    setTimeout(() => {
+      try {
+        resolve(fn());
+      } catch (e) {
+        reject(e);
+      }
+    }, 16);
+  });
 }

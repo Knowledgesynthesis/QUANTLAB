@@ -1,78 +1,187 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+@import 'tailwindcss';
 
-@layer base {
-  :root {
-    --background: 0 0% 100%;
-    --foreground: 222.2 84% 4.9%;
-    --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-    --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-    --primary: 221.2 83.2% 53.3%;
-    --primary-foreground: 210 40% 98%;
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-    --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
-    --radius: 0.5rem;
-  }
+@custom-variant dark (&:where(.dark, .dark *));
 
-  .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-    --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
-  }
+/*
+ * Design tokens. Chart series and status colours follow a colour-vision-deficiency
+ * validated palette; light and dark steps are selected separately, not inverted.
+ */
+:root {
+  color-scheme: light;
+  --background: #f7f7f5;
+  --surface: #fcfcfb;
+  --card: #ffffff;
+  --foreground: #0b0b0b;
+  --muted: #f0efec;
+  --muted-foreground: #52514e;
+  --subtle-foreground: #706f6a;
+  --border: #e2e1dc;
+  --input: #d6d5cf;
+  --primary: #2a78d6;
+  --primary-foreground: #ffffff;
+  --primary-soft: #e6f0fc;
+  --ring: #2a78d6;
+
+  --series-1: #2a78d6;
+  --series-2: #eb6834;
+  --series-3: #1baf7a;
+  --series-4: #6250d6;
+  --grid: #e9e8e4;
+  --axis: #8b8a84;
+
+  --good: #0ca30c;
+  --good-text: #006300;
+  --good-soft: #e7f6e7;
+  --warning: #fab219;
+  --warning-text: #7a5200;
+  --warning-soft: #fdf3dc;
+  --critical: #d03b3b;
+  --critical-text: #a32525;
+  --critical-soft: #fbe9e9;
+  --info-soft: #e9f1fb;
+}
+
+.dark {
+  color-scheme: dark;
+  --background: #121211;
+  --surface: #1a1a19;
+  --card: #1a1a19;
+  --foreground: #f0efec;
+  --muted: #252523;
+  --muted-foreground: #c3c2b7;
+  --subtle-foreground: #9e9d94;
+  --border: #33332f;
+  --input: #45453f;
+  --primary: #3987e5;
+  --primary-foreground: #ffffff;
+  --primary-soft: #1c2a3d;
+  --ring: #5598e7;
+
+  --series-1: #3987e5;
+  --series-2: #d95926;
+  --series-3: #199e70;
+  --series-4: #9085e9;
+  --grid: #2a2a27;
+  --axis: #7d7c75;
+
+  --good: #0ca30c;
+  --good-text: #5fd35f;
+  --good-soft: #15281a;
+  --warning: #fab219;
+  --warning-text: #f5c75c;
+  --warning-soft: #2e2612;
+  --critical: #d03b3b;
+  --critical-text: #f08a8a;
+  --critical-soft: #331a1a;
+  --info-soft: #18222f;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-surface: var(--surface);
+  --color-card: var(--card);
+  --color-foreground: var(--foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-subtle-foreground: var(--subtle-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-primary-soft: var(--primary-soft);
+  --color-ring: var(--ring);
+  --color-series-1: var(--series-1);
+  --color-series-2: var(--series-2);
+  --color-series-3: var(--series-3);
+  --color-series-4: var(--series-4);
+  --color-good: var(--good);
+  --color-good-text: var(--good-text);
+  --color-good-soft: var(--good-soft);
+  --color-warning: var(--warning);
+  --color-warning-text: var(--warning-text);
+  --color-warning-soft: var(--warning-soft);
+  --color-critical: var(--critical);
+  --color-critical-text: var(--critical-text);
+  --color-critical-soft: var(--critical-soft);
+  --color-info-soft: var(--info-soft);
+  --font-sans: ui-sans-serif, system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+  --font-mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, 'Liberation Mono', monospace;
 }
 
 @layer base {
   * {
-    @apply border-border;
+    border-color: var(--border);
+  }
+  html {
+    -webkit-text-size-adjust: 100%;
+    scroll-padding-top: 4.5rem;
   }
   body {
-    @apply bg-background text-foreground;
-    font-feature-settings: 'rlig' 1, 'calt' 1;
+    background: var(--background);
+    color: var(--foreground);
+    font-family: var(--font-sans);
+    font-feature-settings: 'kern', 'tnum' 0;
+    -webkit-font-smoothing: antialiased;
+  }
+  :focus-visible {
+    outline: 2px solid var(--ring);
+    outline-offset: 2px;
+  }
+  input[type='range'] {
+    accent-color: var(--primary);
+  }
+  code, kbd, pre {
+    font-family: var(--font-mono);
   }
 }
 
-/* Custom scrollbar for dark mode */
-::-webkit-scrollbar {
-  width: 10px;
-  height: 10px;
+@layer components {
+  .prose-ql {
+    line-height: 1.65;
+  }
+  .prose-ql p + p {
+    margin-top: 0.75rem;
+  }
+  .prose-ql strong {
+    font-weight: 600;
+    color: var(--foreground);
+  }
+  .prose-ql a {
+    color: var(--primary);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+  .prose-ql ul, ul.prose-ql {
+    list-style: disc;
+    padding-left: 1.25rem;
+  }
+  .prose-ql ol, ol.prose-ql {
+    list-style: decimal;
+    padding-left: 1.25rem;
+  }
+  .prose-ql li + li, ul.prose-ql > li + li, ol.prose-ql > li + li {
+    margin-top: 0.3rem;
+  }
+  .prose-ql code {
+    background: var(--muted);
+    border-radius: 0.25rem;
+    padding: 0.05rem 0.3rem;
+    font-size: 0.875em;
+  }
+  .tabular {
+    font-variant-numeric: tabular-nums;
+  }
+  .scrollbar-none {
+    scrollbar-width: none;
+  }
+  .scrollbar-none::-webkit-scrollbar {
+    display: none;
+  }
 }
 
-::-webkit-scrollbar-track {
-  @apply bg-secondary;
-}
-
-::-webkit-scrollbar-thumb {
-  @apply bg-muted-foreground/30 rounded-md;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  @apply bg-muted-foreground/50;
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
 }
