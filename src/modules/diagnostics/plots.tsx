@@ -42,7 +42,7 @@ export function DiagnosticPanel({ fit, height = 220, highlight }: { fit: OLSFit;
         </Plot>
       </div>
       <div>
-        <p className="mb-1 text-sm font-medium">4. Residuals vs leverage (Cook&apos;s D contours 0.5, 1)</p>
+        <p className="mb-1 text-sm font-medium">4. Residuals vs leverage <span className="font-normal text-muted-foreground">(red: Cook&apos;s D = 0.5, 1; off-scale when no point is near them)</span></p>
         <Plot height={height} xDomain={[0, hMax]} yDomain={rExt} xLabel="Leverage (hat value)" yLabel="Standardized residuals" ariaLabel="Standardized residuals versus leverage with Cook's distance contours">
           <HRule y={0} dash="" />
           {[0.5, 1].map((D) => (

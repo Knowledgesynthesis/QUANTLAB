@@ -1,172 +1,63 @@
-# QuantLab - Advanced Methods for Clinician-Scientists
+# QuantLab
 
-**A mobile-first, offline-capable educational platform teaching the complete research data pipeline.**
+**Interactive, evidence-based training in the clinical research data pipeline**: auditing raw data, cleaning, missing data, regression diagnostics, collinearity, validation and reproducibility.
 
-## Overview
+Live: https://quantlab-learn.vercel.app
 
-QuantLab is an interactive learning platform designed to teach clinician-scientists the entire research data pipeline, from raw data through cleaning, imputation, modeling, diagnostics, and validation to manuscript-ready insights.
+Every number in QuantLab is computed in the browser from a synthetic cohort whose true data-generating model is known. Learners see the bias and confidence-interval coverage of each analytic choice directly, instead of reading claims about it.
 
-## Features
+## Curriculum
 
-- 📱 **Mobile-First Design** - Optimized for learning on any device
-- 🌙 **Dark Mode** - Easy on the eyes during long study sessions
-- 📴 **Offline Capable** - Learn anywhere with PWA technology
-- 📊 **Interactive Visualizations** - Hands-on learning with Recharts
-- 🧪 **Synthetic Datasets** - Practice with realistic but safe data
-- ✅ **Evidence-Based** - All content is statistically accurate and methodologically sound
-- 🎯 **Comprehensive** - Covers the full research workflow
+| # | Module | Labs |
+|---|--------|------|
+| 1 | Raw Data Foundations | Design-effect calculator · variable classification · **audit lab** on a 607-row messy EHR extract with 12 planted problem types · data-dictionary export |
+| 2 | Cleaning & Preprocessing | Outlier rules (SD vs IQR vs MAD, masking) · transformations with Box–Cox and smearing · **dichotomization power/false-positive simulation** · design matrix and dummy-variable trap |
+| 3 | Missing Data & Imputation | **Mechanism × method simulator** (8 methods, bias/coverage with Monte Carlo SE) · missingness map · Rubin's rules and number-of-imputations calculators · delta-adjusted tipping-point analysis |
+| 4 | Regression Diagnostics | Separation and Firth · six-scenario residual-plot lab with a diagnosis challenge · **drag-a-point influence lab** (hat, studentized residuals, Cook's D, DFBETAS, Huber) · HC3 coverage simulation |
+| 5 | Multicollinearity | Correlated-predictor simulator · VIF/GVIF/Belsley condition indices on the cohort · the centering myth · ridge bias–variance |
+| 6 | Validation & Model Performance | Discrimination/calibration/decision-curve lab · overfitting simulator · **split vs CV vs bootstrap** against the truth · leakage demo · bootstrap CI coverage experiment · Riley sample-size calculator |
+| 7 | Reproducibility & Reporting | Seed/RNG-version demo · project self-audit · **multiverse of 324 specifications** · methods-section critique against current guidelines |
+| 8 | Capstone | Messy extract → cleaning → model → missing data → diagnostics → bootstrap validation → generated methods text, R script and reviewer report, with estimates compared to the truth |
 
-## Learning Modules
+Plus a 53-question assessment bank (practice and mock-exam modes, per-module mastery), a 69-term glossary and 83 references.
 
-### 1. Raw Data Foundations (Beginner)
-Learn to import, audit, and understand different types of messy data with data dictionaries.
+## Evidence and verification
 
-### 2. Cleaning & Preprocessing (Beginner)
-Master data cleaning techniques including deduplication, outlier handling, and transformations.
+- **Statistics engine** (`src/lib/stats`): OLS with hat values, internally/externally studentized residuals, Cook's distance, DFBETAS, DFFITS, HC0/HC1/HC3, studentized Breusch–Pagan; VIF, GVIF, condition indices with variance-decomposition proportions; logistic regression (IRLS, ridge, Firth); LOWESS; percentile and BCa bootstrap; Bayesian-normal, PMM and logistic imputation, chained equations, Rubin's rules with Barnard–Rubin df; Riley et al. sample-size criteria; seeded sfc32 RNG.
+- **Tested against reference software**: `scripts/make_reference_fixtures.py` produces statsmodels/SciPy results; unit tests require agreement to ~1e-8 and check influence measures against brute-force leave-one-out refits. Sample-size results reproduce `pmsampsize`.
+- **Simulation claims are tested**: e.g., complete-case regression is unbiased when missingness depends on a covariate but biased when it depends on the outcome; MI with the outcome recovers the truth; the recommended capstone choices recover the generating coefficients.
+- **References**: `npm run verify:refs` checks every DOI against doi.org; titles were cross-checked against Crossref metadata.
+- **Current standards**: TRIPOD+AI (2024), PROBAST+AI (2025), CONSORT 2025, SPIRIT 2025, TARGET (2025), TRIPOD-LLM (2025), CKD-EPI 2021 (race-free) eGFR, HC3 robust SEs, TARMOS missing-data reporting, modern R/Python idioms (renv, targets, Quarto, uv, `numpy.random.default_rng`, pandera).
 
-### 3. Missing Data & Imputation (Intermediate)
-Understand missingness mechanisms (MCAR/MAR/MNAR) and apply appropriate imputation strategies.
+## Development
 
-### 4. Regression Diagnostics (Intermediate)
-Perform comprehensive regression diagnostics including residuals, leverage, and influence analysis.
-
-### 5. Multicollinearity Analysis (Intermediate)
-Detect and handle multicollinearity using VIF, correlation matrices, and condition indices.
-
-### 6. Validation & Reproducibility (Advanced)
-Learn cross-validation, bootstrapping, and reproducibility best practices for research.
-
-### 7. Integrated Pipeline Sandbox (Advanced)
-Build complete end-to-end research data pipelines from cleaning to validation.
-
-## Technology Stack
-
-- **Framework**: React 18 with TypeScript
-- **Build Tool**: Vite
-- **Styling**: Tailwind CSS
-- **UI Components**: shadcn/ui (Radix UI primitives)
-- **State Management**: Zustand
-- **Visualizations**: Recharts
-- **Routing**: React Router
-- **PWA**: vite-plugin-pwa with Workbox
-- **Offline Storage**: IndexedDB
-
-## Getting Started
-
-### Prerequisites
-
-- Node.js 18+ and npm
-
-### Installation
+Requires Node ≥ 20.19.
 
 ```bash
-# Install dependencies
 npm install
-
-# Run development server
-npm run dev
-
-# Build for production
-npm run build
-
-# Preview production build
-npm run preview
+npm run dev          # http://localhost:5173
+npm test             # unit + simulation tests (vitest)
+npm run lint
+npm run build        # type-check + production build (PWA, works offline)
+npm run smoke        # every route at phone and desktop width; fails on console errors or overflow (needs Playwright)
+npm run interact     # clicks every lab control, walks the capstone, takes the exam
+npm run verify:refs  # DOI check
 ```
 
-The app will be available at `http://localhost:5173`
+To regenerate the reference fixtures: `pip install numpy scipy statsmodels && python scripts/make_reference_fixtures.py`.
 
-## Project Structure
+## Stack
+
+React 19 · TypeScript · Vite 8 · Tailwind CSS 4 · React Router 7 · Zustand 5 · vite-plugin-pwa · Vitest. Charts are a small dependency-free SVG kit (`src/components/plot`) with a colour-vision-deficiency-validated palette in light and dark themes.
 
 ```
-QUANTLAB/
-├── src/
-│   ├── components/
-│   │   ├── ui/           # shadcn/ui components
-│   │   ├── layout/       # Layout components (Header, Sidebar, etc.)
-│   │   └── modules/      # Module-specific components
-│   ├── data/             # Module metadata and content
-│   ├── hooks/            # Custom React hooks
-│   ├── lib/              # Utility functions
-│   ├── store/            # Zustand state management
-│   ├── types/            # TypeScript type definitions
-│   ├── App.tsx           # Main app component with routing
-│   ├── main.tsx          # Application entry point
-│   └── index.css         # Global styles with Tailwind
-├── public/               # Static assets
-└── index.html            # HTML entry point
+src/
+├── lib/stats/        statistics engine + tests
+├── data/             seeded synthetic cohort, messy extract, audit/cleaning rules
+├── content/          curriculum, questions, glossary, references
+├── modules/          one file per lesson; simulation engines next to their lessons
+├── components/       UI kit, plot kit, learning components (citations, checks, labs)
+└── pages/            home, module, lesson, assessment, glossary, references, about
 ```
 
-## Key Principles
-
-### Educational Philosophy
-
-- **Evidence-Based**: All content is grounded in established research methodology
-- **Interactive**: Learn by doing with hands-on simulations
-- **Progressive**: Modules build on each other systematically
-- **Accessible**: WCAG 2.2 AA compliant for all learners
-- **Transparent**: Methods are clearly explained and justified
-
-### Technical Philosophy
-
-- **Offline-First**: Full functionality without internet
-- **Performance**: Fast load times and smooth interactions
-- **Type Safety**: Comprehensive TypeScript coverage
-- **Accessibility**: Keyboard navigation and screen reader support
-- **Reproducibility**: Clear code organization and documentation
-
-## Learning Objectives
-
-By completing QuantLab, learners will be able to:
-
-1. Systematically audit and document raw research data
-2. Apply appropriate data cleaning and transformation techniques
-3. Classify missingness mechanisms and select imputation strategies
-4. Perform comprehensive regression diagnostics
-5. Detect and handle multicollinearity
-6. Validate models using cross-validation and bootstrapping
-7. Follow reproducibility best practices
-8. Build complete, transparent research data pipelines
-
-## Target Audience
-
-- Medical students (MS3-MS4)
-- Residents and fellows
-- Attending clinicians conducting research
-- Clinical researchers and QI teams
-- Anyone analyzing clinical or biomedical data
-
-## Reporting Standards Covered
-
-- **STROBE**: Strengthening the Reporting of Observational Studies in Epidemiology
-- **TRIPOD**: Transparent Reporting of a multivariable prediction model for Individual Prognosis Or Diagnosis
-- **EQUATOR**: Enhancing the QUAlity and Transparency Of health Research
-- **PROBAST**: Prediction model Risk Of Bias ASsessment Tool
-
-## Contributing
-
-This is an educational project. Contributions should maintain:
-- Statistical accuracy
-- Methodological orthodoxy
-- Clear, accessible explanations
-- Evidence-based content
-
-## License
-
-Copyright © 2024 QuantLab. All rights reserved.
-
-## Acknowledgments
-
-Built following best practices in:
-- Biostatistics education
-- Data science pedagogy
-- Research reproducibility
-- Clinical research methodology
-- User experience design
-
-## Disclaimer
-
-QuantLab is for educational purposes only. It does not provide medical advice or clinical decision support. All datasets are synthetic and for learning purposes only.
-
----
-
-**QuantLab** - Making research data analysis transparent, reproducible, and accessible.
+Progress and answers are stored only in the browser's localStorage. All data are synthetic.

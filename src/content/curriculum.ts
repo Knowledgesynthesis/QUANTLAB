@@ -144,7 +144,7 @@ export const modules: ModuleMeta[] = [
       'Export a reproducible methods section and R script',
     ],
     lessons: [
-      { slug: 'capstone', title: 'Length-of-stay study', summary: 'Seven steps from raw extract to manuscript, with a reviewer report on your choices.', minutes: 45, interactive: 'Full pipeline' },
+      { slug: 'capstone', title: 'Length-of-stay study', summary: 'Six steps from raw extract to manuscript, with a reviewer report on your choices.', minutes: 45, interactive: 'Full pipeline' },
     ],
   },
 ];

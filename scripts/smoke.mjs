@@ -33,7 +33,7 @@ const port = await new Promise((resolve) => {
   const srv = createServer();
   srv.listen(0, () => { const p = srv.address().port; srv.close(() => resolve(p)); });
 });
-const server = spawn('npx', ['vite', 'preview', '--port', String(port), '--strictPort'], { stdio: 'pipe' });
+const server = spawn(process.execPath, [new URL('../node_modules/vite/bin/vite.js', import.meta.url).pathname, 'preview', '--port', String(port), '--strictPort'], { stdio: 'pipe', env: { ...process.env, NO_COLOR: '1', FORCE_COLOR: '0' } });
 await new Promise((resolve, reject) => {
   const t = setTimeout(() => reject(new Error('preview server did not start')), 20000);
   server.stdout.on('data', (d) => { if (String(d).includes(String(port))) { clearTimeout(t); resolve(); } });

@@ -186,8 +186,10 @@ export interface Pt {
   key?: string | number;
 }
 
-export function Dots({ points, color = 'var(--series-1)', r = 4, opacity = 0.85, ring = true }: { points: readonly Pt[]; color?: string; r?: number; opacity?: number; ring?: boolean }) {
+export function Dots({ points, color = 'var(--series-1)', r = 4, opacity = 0.85, ring }: { points: readonly Pt[]; color?: string; r?: number; opacity?: number; ring?: boolean }) {
   const { sx, sy, clipId } = usePlot();
+  // A surface ring separates sparse markers from lines; on dense scatters it would erase neighbouring points.
+  ring = ring ?? points.length <= 40;
   return (
     <g clipPath={`url(#${clipId})`}>
       {points.map((p, i) =>

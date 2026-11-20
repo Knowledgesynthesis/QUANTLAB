@@ -1,7 +1,7 @@
 import { useMemo, useState } from 'react';
 import { Play, Shuffle } from 'lucide-react';
-import { Rng } from '@/lib/stats';
-import { Plot, Dots, VRule, HoverLayer, Line, extent } from '@/components/plot/Plot';
+import { Rng, histogram } from '@/lib/stats';
+import { Plot, Dots, VRule, HoverLayer, Line, Bars, extent } from '@/components/plot/Plot';
 import { Histogram } from '@/components/plot/charts';
 import { Button, Callout, DataTable, Legend, SelectField, SliderField, Tabs } from '@/components/ui';
 import { CheckYourself, Cite, Lab, P, Takeaways } from '@/components/learning';
@@ -100,6 +100,7 @@ export default function Simulator() {
           <div>
             <p className="mb-1 text-sm font-medium">BMI: observed (blue) vs the values that went missing (orange)</p>
             <Histogram values={observed} label="BMI (kg/m²)" domain={dom} bins={28} height={230}>
+              <Bars bins={histogram(missingTrue, { domain: dom, bins: 28 })} color="var(--series-2)" opacity={0.75} />
               <VRule x={observed.reduce((s, v) => s + v, 0) / observed.length} color="var(--series-1)" dash="" width={2} />
               <VRule x={missingTrue.reduce((s, v) => s + v, 0) / Math.max(1, missingTrue.length)} color="var(--series-2)" dash="" width={2} />
               <VRule x={TRUTH.bmiMean} color="var(--good)" width={2} />
