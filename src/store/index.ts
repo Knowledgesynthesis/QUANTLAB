@@ -1,103 +1,70 @@
 import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
-import type { UserProgress, SyntheticDataset, Pipeline } from '@/types';
 
-interface AppState {
-  // Theme
-  darkMode: boolean;
-  toggleDarkMode: () => void;
+export type Theme = 'light' | 'dark' | 'system';
 
-  // User Progress
-  userProgress: UserProgress;
-  updateProgress: (moduleId: string, completed: boolean) => void;
-  recordAssessmentScore: (moduleId: string, score: number) => void;
-
-  // Current Module
-  currentModule: string | null;
-  setCurrentModule: (moduleId: string | null) => void;
-
-  // Datasets
-  datasets: SyntheticDataset[];
-  addDataset: (dataset: SyntheticDataset) => void;
-
-  // Pipelines
-  pipelines: Pipeline[];
-  addPipeline: (pipeline: Pipeline) => void;
-  updatePipeline: (pipelineId: string, updates: Partial<Pipeline>) => void;
-  deletePipeline: (pipelineId: string) => void;
-
-  // Sidebar state
-  sidebarOpen: boolean;
-  toggleSidebar: () => void;
+export interface QuizRecord {
+  correct: boolean;
+  attempts: number;
+  at: string;
 }
 
-export const useAppStore = create<AppState>()(
+interface AppState {
+  theme: Theme;
+  setTheme: (t: Theme) => void;
+  completedLessons: Record<string, string>;
+  toggleLesson: (key: string, done?: boolean) => void;
+  quiz: Record<string, QuizRecord>;
+  recordAnswer: (questionId: string, correct: boolean) => void;
+  resetQuiz: () => void;
+  lastLesson: string | null;
+  setLastLesson: (key: string) => void;
+  auditLog: Record<string, string>;
+  setAuditAction: (issueId: string, action: string) => void;
+  resetAudit: () => void;
+  resetAll: () => void;
+}
+
+export const useApp = create<AppState>()(
   persist(
     (set) => ({
-      // Theme
-      darkMode: true,
-      toggleDarkMode: () => set((state) => ({ darkMode: !state.darkMode })),
-
-      // User Progress
-      userProgress: {
-        userId: 'default-user',
-        completedModules: [],
-        completedLessons: [],
-        assessmentScores: {},
-        lastAccessed: new Date().toISOString(),
-      },
-      updateProgress: (moduleId, completed) =>
-        set((state) => ({
-          userProgress: {
-            ...state.userProgress,
-            completedModules: completed
-              ? [...state.userProgress.completedModules, moduleId]
-              : state.userProgress.completedModules.filter((id) => id !== moduleId),
-            lastAccessed: new Date().toISOString(),
-          },
-        })),
-      recordAssessmentScore: (moduleId, score) =>
-        set((state) => ({
-          userProgress: {
-            ...state.userProgress,
-            assessmentScores: {
-              ...state.userProgress.assessmentScores,
-              [moduleId]: score,
+      theme: 'system',
+      setTheme: (theme) => set({ theme }),
+      completedLessons: {},
+      toggleLesson: (key, done) =>
+        set((s) => {
+          const next = { ...s.completedLessons };
+          const isDone = done ?? !next[key];
+          if (isDone) next[key] = new Date().toISOString();
+          else delete next[key];
+          return { completedLessons: next };
+        }),
+      quiz: {},
+      recordAnswer: (id, correct) =>
+        set((s) => {
+          const prev = s.quiz[id];
+          return {
+            quiz: {
+              ...s.quiz,
+              [id]: { correct, attempts: (prev?.attempts ?? 0) + 1, at: new Date().toISOString() },
             },
-            lastAccessed: new Date().toISOString(),
-          },
-        })),
-
-      // Current Module
-      currentModule: null,
-      setCurrentModule: (moduleId) => set({ currentModule: moduleId }),
-
-      // Datasets
-      datasets: [],
-      addDataset: (dataset) =>
-        set((state) => ({ datasets: [...state.datasets, dataset] })),
-
-      // Pipelines
-      pipelines: [],
-      addPipeline: (pipeline) =>
-        set((state) => ({ pipelines: [...state.pipelines, pipeline] })),
-      updatePipeline: (pipelineId, updates) =>
-        set((state) => ({
-          pipelines: state.pipelines.map((p) =>
-            p.id === pipelineId ? { ...p, ...updates } : p
-          ),
-        })),
-      deletePipeline: (pipelineId) =>
-        set((state) => ({
-          pipelines: state.pipelines.filter((p) => p.id !== pipelineId),
-        })),
-
-      // Sidebar
-      sidebarOpen: true,
-      toggleSidebar: () => set((state) => ({ sidebarOpen: !state.sidebarOpen })),
+          };
+        }),
+      resetQuiz: () => set({ quiz: {} }),
+      lastLesson: null,
+      setLastLesson: (key) => set({ lastLesson: key }),
+      auditLog: {},
+      setAuditAction: (issueId, action) => set((s) => ({ auditLog: { ...s.auditLog, [issueId]: action } })),
+      resetAudit: () => set({ auditLog: {} }),
+      resetAll: () => set({ completedLessons: {}, quiz: {}, lastLesson: null, auditLog: {} }),
     }),
-    {
-      name: 'quantlab-storage',
-    }
-  )
+    { name: 'quantlab-v2', version: 2 },
+  ),
 );
+
+export function applyTheme(theme: Theme) {
+  const dark = theme === 'dark' || (theme === 'system' && window.matchMedia('(prefers-color-scheme: dark)').matches);
+  document.documentElement.classList.toggle('dark', dark);
+  const meta = document.querySelector('meta[name="theme-color"]');
+  if (meta) meta.setAttribute('content', dark ? '#1a1a19' : '#fcfcfb');
+}
