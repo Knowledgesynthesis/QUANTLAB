@@ -31,7 +31,7 @@ export const modules: ModuleMeta[] = [
     lessons: [
       { slug: 'structure', title: 'Structure and unit of analysis', summary: 'Tidy data, one row per what, and why repeated rows break standard errors.', minutes: 8 },
       { slug: 'variables', title: 'Variable types and what they imply', summary: 'Measurement scales, units, time-to-event, and the information you lose by coarsening.', minutes: 8 },
-      { slug: 'audit', title: 'Audit lab: find the problems', summary: 'Run real checks on a 610-row messy EHR extract and decide what to do with each finding.', minutes: 20, interactive: 'Audit lab' },
+      { slug: 'audit', title: 'Audit lab: find the problems', summary: 'Run real checks on a 607-row messy EHR extract and decide what to do with each finding.', minutes: 20, interactive: 'Audit lab' },
       { slug: 'dictionary', title: 'Data dictionary and audit trail', summary: 'Document every variable and every change so the analysis can be rebuilt from raw data.', minutes: 8, interactive: 'Dictionary export' },
     ],
   },

@@ -167,7 +167,7 @@ export function Stat({ label, value, sub, tone }: { label: ReactNode; value: Rea
   const toneCls = tone === 'good' ? 'text-good-text' : tone === 'warning' ? 'text-warning-text' : tone === 'critical' ? 'text-critical-text' : '';
   return (
     <div className="min-w-0 rounded-lg bg-muted/60 p-3">
-      <div className="truncate text-xs text-muted-foreground">{label}</div>
+      <div className="line-clamp-2 text-xs leading-tight text-muted-foreground">{label}</div>
       <div className={cn('tabular mt-0.5 text-xl font-semibold leading-tight', toneCls)}>{value}</div>
       {sub && <div className="mt-0.5 text-xs text-muted-foreground">{sub}</div>}
     </div>
@@ -196,7 +196,7 @@ export function Tabs<T extends string>({ tabs, value, onChange, className }: { t
   );
 }
 
-export function DataTable({ head, rows, className, caption, align }: { head: ReactNode[]; rows: ReactNode[][]; className?: string; caption?: ReactNode; align?: ('l' | 'r' | 'c')[] }) {
+export function DataTable({ head, rows, className, caption, align, nowrap }: { head: ReactNode[]; rows: ReactNode[][]; className?: string; caption?: ReactNode; align?: ('l' | 'r' | 'c')[]; nowrap?: boolean }) {
   const a = (i: number) => (align?.[i] === 'r' ? 'text-right' : align?.[i] === 'c' ? 'text-center' : 'text-left');
   return (
     <div className={cn('overflow-x-auto rounded-lg border', className)}>
@@ -213,7 +213,7 @@ export function DataTable({ head, rows, className, caption, align }: { head: Rea
           {rows.map((r, i) => (
             <tr key={i} className="border-t">
               {r.map((c, j) => (
-                <td key={j} className={cn('px-3 py-1.5', a(j))}>{c}</td>
+                <td key={j} className={cn('px-3 py-1.5', nowrap && 'whitespace-nowrap', a(j))}>{c}</td>
               ))}
             </tr>
           ))}
